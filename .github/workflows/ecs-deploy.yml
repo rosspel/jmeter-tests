@@ -101,7 +101,8 @@ jobs:
          spec: |
           {
             "taskDefinition": "arn:aws:ecs:us-east-1:453899258808:task-definition/ecs-task-definition:1",
-            "serviceName": "service-from-github"
+            "serviceName": "service-from-github",
+            "cluster": "ecs-cluster-test"
           }
          force-new-deployment: false
          wait-until-deployment-complete: true
