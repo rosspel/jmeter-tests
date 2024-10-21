@@ -20,7 +20,7 @@ env:
 jobs:
   deploy:
     name: Deploy
-    runs-on: ['atc-ubuntu-latest']
+    runs-on: ['ubuntu-latest']
 
     steps:
       - name: Checkout
