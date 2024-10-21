@@ -1,7 +1,7 @@
 #!/bin/bash
 cd bin
 mkdir reports
-sh jmeter -n -t /opt/apache-jmeter-5.5/test-plan.jmx \
+sh jmeter -n -t /opt/apache-jmeter-5.5/test-plan-2.jmx \
   -JThreadNumber=10 \
   -JRampUpPeriod=1 \
   -Jiterations=10 \
