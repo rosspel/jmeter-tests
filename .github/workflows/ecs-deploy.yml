@@ -94,19 +94,27 @@ jobs:
 #          wait-for-service-stability: true
 
 
-      - name: ECS Service creation
-        uses: scribd/amazon-ecs-service-action@v1
-        with:
-         #spec-file: examples/service-spec.json
-         spec: |
-          {
-            "taskDefinition": "arn:aws:ecs:us-east-1:453899258808:task-definition/ecs-task-definition:1",
-            "serviceName": "service-from-github",
-            "cluster": "ecs-cluster-test",
-            "desiredCount": 1
-          }
-         force-new-deployment: false
-         wait-until-deployment-complete: true
+#      - name: ECS Service creation
+#        uses: scribd/amazon-ecs-service-action@v1
+#        with:
+#         #spec-file: examples/service-spec.json
+#         spec: |
+#          {
+#            "taskDefinition": "arn:aws:ecs:us-east-1:453899258808:task-definition/ecs-task-definition:1",
+#            "serviceName": "service-from-github",
+#            "cluster": "ecs-cluster-test",
+#            "desiredCount": 1
+#          }
+#         force-new-deployment: false
+#         wait-until-deployment-complete: true
+
+
+      - name: Update ECS Service Desired Count
+        run: |
+          aws ecs update-service \
+          --cluster ecs-cluster-test \
+          --service ecs-service \
+          --desired-count 1
 
 #      - name: Delete ECS Service
 #        uses: scribd/amazon-ecs-service-action@v1
