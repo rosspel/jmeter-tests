@@ -100,7 +100,8 @@ jobs:
          #spec-file: examples/service-spec.json
          spec: |
           {
-            "taskDefinition": "arn:aws:ecs:us-east-1:453899258808:task-definition/ecs-task-definition:1"
+            "taskDefinition": "arn:aws:ecs:us-east-1:453899258808:task-definition/ecs-task-definition:1",
+            "serviceName": "service-from-github"
           }
          force-new-deployment: false
          wait-until-deployment-complete: true
