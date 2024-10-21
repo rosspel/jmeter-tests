@@ -155,4 +155,20 @@ jobs:
            sleep 10
           done
 
+      - name: Download from S3
+        run: |
+         aws s3 cp s3://ecs-results/results-1.txt ./reports/
+         aws s3 cp s3://ecs-results/results-2.txt ./reports/
+         specificPath=$(pwd)
+         echo "specificPath=$specificPath" >> $GITHUB_ENV
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: "tests-reports"
+          path:  ${{ env.specificPath }}/reports/*.txt
+
+      
+
 
