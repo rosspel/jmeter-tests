@@ -3,7 +3,7 @@
 # Define variables
 BUCKET_NAME="ecs-results"
 FILE_PATH="/opt/apache-jmeter-5.5/results.txt"
-S3_KEY="results.txt"
+S3_KEY="results-2.txt"
 
 cd bin
 mkdir reports
