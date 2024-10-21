@@ -54,7 +54,7 @@ jobs:
       - name: Build, tag, and push second image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: cdbase/base-performance-tests-images
+          ECR_REPOSITORY: ecs-test
           IMAGE_TAG: second
         run: |
           echo "Pushing second image..."
