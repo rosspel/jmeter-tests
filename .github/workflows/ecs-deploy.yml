@@ -68,12 +68,6 @@ jobs:
       - name: Build docker image 2
         run: docker build -t jmeter-2:latest -f Dockerfile-2 .
 
-#
-#
-#      - name: Run  docker image
-#        run: docker run --name jmeter-container jmeter bash /opt/apache-jmeter-5.5/BASE.sh
-#        run: |
-#          docker run --name jmeter-container -e COOKIE_VALUE="${{ inputs.cookie-value }}" -e TOKEN_VALUE="${{ inputs.token-value }}" jmeter bash /opt/apache-jmeter-5.5/BASE.sh
 
 
 
@@ -109,17 +103,27 @@ jobs:
 #         wait-until-deployment-complete: true
 
 
-      - name: Update ECS Service Desired Count
-        run: |
-          aws ecs update-service \
-          --cluster ecs-cluster-test \
-          --service ecs-service \
-          --desired-count 1
+#      - name: Update ECS Service Desired Count to 1
+#        run: |
+#          aws ecs update-service \
+#          --cluster ecs-cluster-test \
+#          --service ecs-service \
+#          --desired-count 1
 
-#      - name: Delete ECS Service
-#        uses: scribd/amazon-ecs-service-action@v1
-#        with:
-#         spec: |
-#          {"cluster": "my-cluster", "serviceName": "my-service"}
-#         action: delete
-#         force-delete: false
+#      - name: Update ECS Service Desired Count to 0
+#        run: |
+#          aws ecs update-service \
+#          --cluster ecs-cluster-test \
+#          --service ecs-service \
+#          --desired-count 0
+
+      - name: Trigger ECS Task
+        run: |
+         aws ecs run-task \
+         --cluster your-ecs-cluster-name \
+         --launch-type FARGATE \
+         --task-definition arn:aws:ecs:us-east-1:453899258808:task-definition/ecs-task-definition:1 \
+         --network-configuration "awsvpcConfiguration={subnets=[subnet-03d9f18c85b4a1db7],securityGroups=[sg-094b6b3a64cebed86],assignPublicIp=ENABLED}" \
+         --count 1
+
+
