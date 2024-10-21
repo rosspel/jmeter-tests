@@ -120,7 +120,7 @@ jobs:
       - name: Trigger ECS Task
         run: |
          aws ecs run-task \
-         --cluster your-ecs-cluster-name \
+         --cluster ecs-cluster-test \
          --launch-type FARGATE \
          --task-definition arn:aws:ecs:us-east-1:453899258808:task-definition/ecs-task-definition:1 \
          --network-configuration "awsvpcConfiguration={subnets=[subnet-03d9f18c85b4a1db7],securityGroups=[sg-094b6b3a64cebed86],assignPublicIp=ENABLED}" \
