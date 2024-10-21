@@ -41,4 +41,4 @@ WORKDIR /opt/apache-jmeter-${JMETER_VERSION}
 COPY / /opt/apache-jmeter-${JMETER_VERSION}
 
 #CMD ["sleep","1000"]
-ENTRYPOINT [ "bash", "start.sh" ]
+ENTRYPOINT [ "bash", "start-1.sh" ]
