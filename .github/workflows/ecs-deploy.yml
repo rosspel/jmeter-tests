@@ -139,7 +139,7 @@ jobs:
 
           while true; do
            STATUS=$(aws ecs describe-tasks \
-            --cluster your-ecs-cluster-name \
+            --cluster ecs-cluster-test \
             --tasks $TASK_ARN \
             --query "tasks[0].lastStatus" \
             --output text)
