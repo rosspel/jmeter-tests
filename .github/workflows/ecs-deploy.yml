@@ -84,7 +84,7 @@ jobs:
 #          task-definition: ${{ env.ECS_TASK_DEFINITION }}
 #          container-name: ${{ env.CONTAINER_NAME }}
 #          image: ${{ steps.build-image.outputs.image }}
-
+#
 #      - name: Deploy Amazon ECS task definition
 #        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
 #        with:
@@ -92,3 +92,23 @@ jobs:
 #          service: ${{ env.ECS_SERVICE }}
 #          cluster: ${{ env.ECS_CLUSTER }}
 #          wait-for-service-stability: true
+
+
+      - name: ECS Service creation
+        uses: scribd/amazon-ecs-service-action@v1
+        with:
+         #spec-file: examples/service-spec.json
+         spec: |
+          {
+            "taskDefinition": "arn:aws:ecs:us-east-1:453899258808:task-definition/ecs-task-definition:1"
+          }
+         force-new-deployment: false
+         wait-until-deployment-complete: true
+
+#      - name: Delete ECS Service
+#        uses: scribd/amazon-ecs-service-action@v1
+#        with:
+#         spec: |
+#          {"cluster": "my-cluster", "serviceName": "my-service"}
+#         action: delete
+#         force-delete: false
