@@ -1,0 +1,94 @@
+name: Deploy to Amazon ECS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read
+
+env:
+  AWS_REGION: "eu-central-1"
+  ECR_REPOSITORY: MY_ECR_REPOSITORY
+    #ECS_SERVICE: MY_ECS_SERVICE
+    #ECS_CLUSTER: MY_ECS_CLUSTER
+    #ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION # path to Amazon ECS task definition
+    # file, e.g. .aws/task-definition.json
+    #CONTAINER_NAME: MY_CONTAINER_NAME           # name of the container in the
+  # containerDefinitions section of the task definition
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ['atc-ubuntu-latest']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         aws-region: us-east-1
+
+
+
+#          TO DO: create ECR on AWS
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        
+      - name: Build, tag, and push first image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ecs-test
+          IMAGE_TAG: first
+        run: |
+          echo "Pushing first image..."
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile-1 . \
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+
+      - name: Build, tag, and push second image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: cdbase/base-performance-tests-images
+          IMAGE_TAG: second
+        run: |
+          echo "Pushing second image..."
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile-2 . \
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+
+      - name: Build docker image 1
+        run: docker build -t jmeter-1:latest -f Dockerfile-1 .
+        
+      - name: Build docker image 2
+        run: docker build -t jmeter-2:latest -f Dockerfile-2 .
+
+#
+#
+#      - name: Run  docker image
+#        run: docker run --name jmeter-container jmeter bash /opt/apache-jmeter-5.5/BASE.sh
+#        run: |
+#          docker run --name jmeter-container -e COOKIE_VALUE="${{ inputs.cookie-value }}" -e TOKEN_VALUE="${{ inputs.token-value }}" jmeter bash /opt/apache-jmeter-5.5/BASE.sh
+
+
+
+#      - name: Fill in the new image ID in the Amazon ECS task definition
+#        id: task-def
+#        uses: aws-actions/amazon-ecs-render-task-definition@v2
+#        with:
+#          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+#          container-name: ${{ env.CONTAINER_NAME }}
+#          image: ${{ steps.build-image.outputs.image }}
+
+#      - name: Deploy Amazon ECS task definition
+#        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+#        with:
+#          task-definition: ${{ steps.task-def.outputs.task-definition }}
+#          service: ${{ env.ECS_SERVICE }}
+#          cluster: ${{ env.ECS_CLUSTER }}
+#          wait-for-service-stability: true
