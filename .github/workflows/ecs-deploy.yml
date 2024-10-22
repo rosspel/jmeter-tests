@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION: "eu-central-1"
+  AWS_REGION: "us-east-1"
   ECR_REPOSITORY: MY_ECR_REPOSITORY
     #ECS_SERVICE: MY_ECS_SERVICE
     #ECS_CLUSTER: MY_ECS_CLUSTER
@@ -60,15 +60,6 @@ jobs:
           echo "Pushing second image..."
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile-2 .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-
-      - name: Build docker image 1
-        run: docker build -t jmeter-1:latest -f Dockerfile-1 .
-        
-      - name: Build docker image 2
-        run: docker build -t jmeter-2:latest -f Dockerfile-2 .
-
-
 
 
 #      - name: Fill in the new image ID in the Amazon ECS task definition
@@ -164,7 +155,7 @@ jobs:
 
       - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: "tests-reports"
           path:  ${{ env.specificPath }}/reports/*.txt
