@@ -146,7 +146,7 @@ jobs:
 
       - name: List S3 content
         run: |
-         aws s3 ls s3://ecs-results/results/
+         aws s3 ls s3://ecs-results/results/ --recursive | sort -k 1,2 -r
 
 
       - name: Download from S3
