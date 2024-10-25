@@ -144,6 +144,11 @@ jobs:
            sleep 10
           done
 
+      - name: List S3 content
+        run: |
+         aws s3 ls s3://ecs-results/results/ --recursive
+
+
       - name: Download from S3
         run: |
          aws s3 cp s3://ecs-results/results-1.txt ./reports/
