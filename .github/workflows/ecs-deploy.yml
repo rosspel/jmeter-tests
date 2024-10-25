@@ -146,13 +146,15 @@ jobs:
 
       - name: List S3 content
         run: |
-         aws s3 ls s3://ecs-results/results/ --recursive | sort -k 1,2 -r
+         lastUpload=$(aws s3 ls s3://ecs-results/results/ --recursive | sort -k 1,2 -r | head -n 1 | awk '{print $4}')
+         echo $lastUpload
+         echo "lastUpload=$lastUpload" >> $GITHUB_ENV
 
 
       - name: Download from S3
         run: |
-         aws s3 cp s3://ecs-results/results-1.txt ./reports/
-         aws s3 cp s3://ecs-results/results-2.txt ./reports/
+         aws s3 cp s3://ecs-results/${{ env.lastUpload }} ./reports/
+         #aws s3 cp s3://ecs-results/results-2.txt ./reports/
          specificPath=$(pwd)
          echo "specificPath=$specificPath" >> $GITHUB_ENV
 
