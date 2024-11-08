@@ -61,7 +61,7 @@ WORKDIR /opt/apache-jmeter-${JMETER_VERSION}
 COPY / /opt/apache-jmeter-${JMETER_VERSION}
 
 # Set the entrypoint to run a custom script (adjust BASE.sh as needed)
-ENTRYPOINT ["bash", "BASE.sh"]
+ENTRYPOINT ["bash", "start-1.sh"]
 
 # Expose any required ports (adjust if needed)
 EXPOSE 8080
