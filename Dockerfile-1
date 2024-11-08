@@ -31,7 +31,7 @@ RUN apk add --no-cache \
     curl \
     python3 \
     py3-pip \
-    && pip3 install --no-cache-dir awscli
+    && pip3 install --no-cache-dir awscli selenium-wire
 
 # TODO: plugins (later)
 # && unzip -oq "/tmp/dependencies/JMeterPlugins-*.zip" -d $JMETER_HOME
