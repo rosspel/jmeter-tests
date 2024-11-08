@@ -34,6 +34,7 @@ RUN apk add --no-cache \
     && pip3 install --no-cache-dir awscli
 
 RUN pip3 install blinker==1.7.0
+RUN apk add --no-cache libffi-dev gcc musl-dev
 RUN pip3 install selenium-wire
 
 
