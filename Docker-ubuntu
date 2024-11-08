@@ -1,0 +1,68 @@
+# Use Ubuntu Jammy (22.04) as the base image
+FROM ubuntu:jammy
+
+# Arguments for JMeter version and other configurations
+ARG JMETER_VERSION="5.5"
+ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
+ENV JMETER_CUSTOM_PLUGINS_FOLDER /plugins
+ENV JMETER_BIN ${JMETER_HOME}/bin
+ENV JMETER_DOWNLOAD_URL https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
+ARG COOKIE_VALUE=""
+ARG TOKEN_VALUE=""
+ENV COOKIE_VALUE=${COOKIE_VALUE}
+ENV TOKEN_VALUE=${TOKEN_VALUE}
+ENV SOCKS_HOST=127.0.0.1
+ENV SOCKS_PORT=5555
+ENV LOCAL_HTTP_PORT=8080
+
+# Install necessary packages and dependencies
+ARG TZ="Europe/Amsterdam"
+ENV TZ ${TZ}
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y \
+    ca-certificates \
+    openjdk-8-jre \
+    curl \
+    unzip \
+    bash \
+    nodejs \
+    npm \
+    tzdata \
+    python3 \
+    python3-pip \
+    sudo \
+    build-essential \
+    libffi-dev \
+    libssl-dev && \
+    update-ca-certificates && \
+    npm install -g http-proxy-to-socks && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install AWS CLI
+RUN pip3 install --no-cache-dir awscli && aws --version
+
+# Install Selenium Wire
+RUN pip3 install selenium-wire
+
+# Download and extract JMeter
+RUN mkdir -p /tmp/dependencies && \
+    curl -L --silent ${JMETER_DOWNLOAD_URL} > /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz && \
+    mkdir -p /opt && \
+    tar -xzf /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz -C /opt && \
+    rm -rf /tmp/dependencies
+
+# Set the global PATH to include JMeter binaries
+ENV PATH $PATH:$JMETER_BIN
+
+# Set working directory to JMeter home
+WORKDIR /opt/apache-jmeter-${JMETER_VERSION}
+
+# Copy custom files to the JMeter directory (optional, modify if needed)
+COPY / /opt/apache-jmeter-${JMETER_VERSION}
+
+# Set the entrypoint to run a custom script (adjust BASE.sh as needed)
+ENTRYPOINT ["bash", "BASE.sh"]
+
+# Expose any required ports (adjust if needed)
+EXPOSE 8080
+
