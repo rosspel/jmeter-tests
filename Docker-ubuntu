@@ -27,7 +27,6 @@ RUN apt-get update && apt-get upgrade -y && \
     bash \
     nodejs \
     npm \
-    tzdata \
     python3 \
     python3-pip \
     sudo \
