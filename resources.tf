@@ -25,7 +25,7 @@ variable "private_subnet_ids" {
 
 # Create ECS Cluster
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "my-ecs-cluster"
+  name = "terraform-ecs-cluster"
 }
 
 # Create ECR Repository
