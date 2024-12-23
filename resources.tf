@@ -8,6 +8,12 @@ terraform {
   required_version = ">= 1.4.0"
 }
 
+backend "s3" {
+    bucket         = "my-terraform-state-bucket-rp"
+    key            = "my-environment/terraform.tfstate"
+    region         = "us-east-1"
+  }
+
 provider "aws" {
   region = "us-east-1" # Replace with your AWS region
 }
