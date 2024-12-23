@@ -30,7 +30,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
 # Create ECR Repository
 resource "aws_ecr_repository" "ecr_repo" {
-  name = "my-repo"
+  name = "terraform-repo"
 }
 
 resource "aws_ecr_lifecycle_policy" "ecr_policy" {
@@ -83,7 +83,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
 
 # Task Definition
 resource "aws_ecs_task_definition" "task_definition" {
-  family                   = "my-task-family"
+  family                   = "terraform-task-family"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256" # Adjust based on your requirements
