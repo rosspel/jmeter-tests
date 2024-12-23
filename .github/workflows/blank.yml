@@ -44,9 +44,13 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
 
+      - name: Sleep
+        run: |
+         sleep 3600
 
-     # - name: Terraform destroy
-     #   id: destroy
-     #   run: terraform destroy -auto-approved
+
+      - name: Terraform destroy
+        id: destroy
+        run: terraform destroy -auto-approved
        
 
