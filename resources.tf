@@ -30,20 +30,22 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
 # Create ECR Repository
 resource "aws_ecr_repository" "ecr_repo" {
-  name                 = "my-ecr-repo"
-  image_tag_mutability = "MUTABLE"
-  lifecycle_policy {
-    policy = <<EOF
+  name = "my-repo"
+}
+
+resource "aws_ecr_lifecycle_policy" "ecr_policy" {
+  repository = aws_ecr_repository.ecr_repo.name
+
+  policy = <<EOL
 {
   "rules": [
     {
-      "rulePriority": 10,
-      "description": "Expire untagged images after 30 days",
+      "rulePriority": 1,
+      "description": "Keep only the last 10 images",
       "selection": {
-        "tagStatus": "untagged",
-        "countType": "sinceImagePushed",
-        "countUnit": "days",
-        "countNumber": 30
+        "tagStatus": "any",
+        "countType": "imageCountMoreThan",
+        "countNumber": 10
       },
       "action": {
         "type": "expire"
@@ -51,10 +53,8 @@ resource "aws_ecr_repository" "ecr_repo" {
     }
   ]
 }
-EOF
-  }
+EOL
 }
-
 # IAM Role for ECS Task Execution
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "terraform-task-execution-role"
