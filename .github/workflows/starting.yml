@@ -1,0 +1,90 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Starting
+
+env:
+ AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+ AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+# Controls when the workflow will run
+on:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+   inputs:
+      selection-value:
+        description: "Choose the thread to be executed. First generate test data, then execute the main test"
+        required: true
+        type: choice
+        options:
+          - generate-test-data
+          - execute-main
+      cookie-value:
+        description: "COOKIE value needed to execute performance tests"
+        required: true
+        type: string
+        default: ""
+      token-value:
+        description: "X-XSRF-TOKEN value needed to execute performance tests"
+        required: true
+        type: string
+        default: ""
+      thread-value:
+        description: "Number of Threads (users)"
+        required: true
+        type: string
+        default: "3"
+      rampup-value:
+        description: "Ramp-up period (seconds)"
+        required: true
+        type: string
+        default: "3"
+      loop-value:
+        description: "Loop count"
+        required: true
+        type: string
+        default: "1"
+   
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  terraform:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init
+        id: init
+        run: terraform init
+    
+      - name: Terraform validate
+        id: validate
+        run: terraform validate
+ 
+      - name: Terraform plan
+        id: plan
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+ 
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false
+
+
+
+      - name: Repository dispatch
+        run: |
+         curl \
+               -X POST\
+               -H "Authorization: Bearer ${{ secrets.TOKEN_GITHUB }}"\
+               -H "Accept: application/vnd.github+json"\
+               --url "https://api.github.com/repos/rosspel/jmeter-tests/dispatches"\
+               -d "{\"event_type\": \"base\", \"client_payload\":{\"started\": \"${{ steps.starting.outputs.started }}\", \"run_id\": \"${{ github.run_id }}\", \"image\": \"$image\", \"selfStatus\": \"${{ needs.get-repo-url.outputs.selfStatus }}\", \"issueKey\": \"${{ needs.get-repo-url.outputs.issueKey }}\", \"release\": \"${{ steps.release.outputs.release }}\" }}"
